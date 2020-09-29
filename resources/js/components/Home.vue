@@ -46,8 +46,26 @@
                 </b-form-group>
             </b-form-group>
         </b-card>
-        <button @click="testMe">Click me</button>
-        <b-table striped hover :items="filteredMovieToShow"></b-table>
+        <h3 v-if="filteredMovieToShow.length > 0">Search Results:</h3>
+        <b-table
+            bordered
+            head-variant="dark"
+            small
+            striped
+            hover
+            :items="filteredMovieToShow"
+        ></b-table>
+
+        <h3 v-if="historyLog.length > 0">History Log:</h3>
+        <b-table
+            bordered
+            head-variant="dark"
+            small
+            id="history-table"
+            striped
+            hover
+            :items="historyLog"
+        ></b-table>
     </div>
 </template>
 
@@ -61,20 +79,17 @@ export default {
             items: [],
             filteredResults: [],
             timeout: 0,
-            firstMovies: []
+            historyLog: []
         };
     },
     methods: {
-        testMe() {
-            console.log(this.moviesToShow);
-        },
-
         newTitleSearch() {
+            //Getting all movies with associated title input.
             fetch(`http://www.omdbapi.com/?s=${this.name}&apikey=7c9b80bf`)
                 .then(response => response.json())
                 .then(response => this.addMoviesToDatabase(response.Search));
         },
-
+        //Method to add movies from first api call to database.
         addMoviesToDatabase(moviesToAdd) {
             var params = {
                 data: moviesToAdd
@@ -84,10 +99,18 @@ export default {
                 console.log(response.data);
             });
 
+            //Getting all movies from database.
             axios.get("/api/movies").then(response => {
                 this.items = response.data;
             });
+
+            //Making filter api call so filtered titles are updated
+            this.filterGenreLanguage();
+
+            //Getting new search history
+            this.getHistory();
         },
+
         filterGenreLanguage() {
             let self = this;
 
@@ -101,18 +124,24 @@ export default {
             axios.post("/api/filter", params).then(function(response) {
                 //Receiving array of filtered movie titles and assigning to component variable.
                 self.filteredResults = response.data;
-                console.log(response.data);
+                // console.log(response.data);
+                console.log("filter ok");
             });
+            this.getHistory();
         },
-        saveFilteredTitles($titleArray) {
-            this.filteredResults = $titleArray;
+        //Method to get all search history data from database
+        getHistory() {
+            axios.get("/api/history").then(response => {
+                this.historyLog = response.data;
+                // console.log(response.data);
+            });
         }
     },
 
     computed: {
+        //seting timout on input change
         input: {
             get() {
-                this.newTitleSearch();
                 return this.name;
             },
             set(val) {
@@ -122,12 +151,15 @@ export default {
                 }, 500);
             }
         },
+
+        //Filtering all movies depending on title input box.
         moviesToShow() {
             return this.items.filter(movie =>
                 movie.name.toLowerCase().includes(this.name.toLowerCase())
             );
         },
 
+        //Filtering api response array with all titles against moviesToShow which checks what use is typing into title box
         filteredMovieToShow() {
             return this.moviesToShow.filter(
                 movie => this.filteredResults.indexOf(movie.name) >= 0
@@ -135,16 +167,26 @@ export default {
         }
     },
     watch: {
+        //title input box watcher that makes new title request when user stops writting for 0.5 seconds
         name: function() {
             this.newTitleSearch();
         }
     },
 
+    //Methods to call when page is loaded for the first time
     mounted: function() {
+        this.getHistory();
         this.filterGenreLanguage();
+        //Getting all the movies from database on page load
         axios.get("/api/movies").then(response => {
             this.items = response.data;
         });
     }
 };
 </script>
+
+<style lang="css">
+h3 {
+    padding-top: 20px;
+}
+</style>

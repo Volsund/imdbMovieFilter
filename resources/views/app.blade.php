@@ -17,6 +17,7 @@
             <b-navbar type="dark" variant="dark" class="mt-2">
                 <b-navbar-nav>
                     <b-nav-item href="/">Movie Filter</b-nav-item>
+                    <b-nav-item href="#history-table">History Log</b-nav-item>
                 </b-navbar-nav>
             </b-navbar>
 
