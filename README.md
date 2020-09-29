@@ -29,11 +29,11 @@ npm run watch
 php artisan serve
 ```
 
-##Project preview
+## Project preview
 
 ![Preview GIFt](https://media.giphy.com/media/FqdnqUjBjpt9fuFMRR/giphy.gif)
 
-##ToDo Improvements
+## ToDo Improvements
 - Data filtering and and queries should refactored and improved and made with working .attach method. 
 - Adding tests.
 
