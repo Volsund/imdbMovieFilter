@@ -3,8 +3,7 @@
 # imdbMovieFilter
 
 ## Project preview
-
-![Preview GIFt](https://media.giphy.com/media/FqdnqUjBjpt9fuFMRR/giphy.gif)
+<img src="https://media.giphy.com/media/FqdnqUjBjpt9fuFMRR/giphy.gif" width="800">
 
 ## Description
 
