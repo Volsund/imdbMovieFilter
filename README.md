@@ -27,8 +27,6 @@ php artisan key:generate
 
 php artisan migrate
 
-npm run watch
-
 php artisan serve
 ```
 
